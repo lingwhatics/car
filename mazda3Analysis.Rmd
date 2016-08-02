@@ -17,11 +17,18 @@ For some reason, I kept all the records related to my car for all the years that
 
 I used a fuel tracker for iOS called [MileageKeeper](http://mileagekeeper.com "Mileage Keeper") and it worked well enough that I didn't ever look for a new one. It has the ability to export and import .csv files, which was quite helpful when Apple had to give me a new phone with a functioning camera.
 
-I have all the service records at a couple different garages in Ottawa and Toronto. This includes oil changes, swapping winter/summer tires and repairs.
+I have all the service records at a couple different garages in Ottawa and Toronto. This includes oil changes, swapping winter/summer tires and repairs. The few times that I had to pay for parking are also in my saved data.
 
-```{r fuel}
+```{r data}
 fuel <- read.csv("data/Mazda3.csv")
 summary(fuel)
+service <- read.csv("data/Service.csv")
+summary(service)
+fixed <- read.csv("data/Fixed.csv")
+summary(fixed)
+parking <- read.csv("data/Parking.csv")
+summary(parking)
+
 ```
 
 ## Including Plots
