@@ -1,7 +1,7 @@
 ---
 title: "Mazda3 Analysis"
 author: "Daley Mikalson"
-date: "August 1, 2016"
+date: "August 2, 2016"
 output:  
       html_document:  
         keep_md: true 
@@ -9,15 +9,20 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(magrittr)
+library(ggplot2)
+library(lubridate)
 ```
 
 ## The data
-
 For some reason, I kept all the records related to my car for all the years that I owned it. Now that I have sold the car, I am going to clear all the paper out, but not before seeing what it tells me about what the car cost me.
 
 I used a fuel tracker for iOS called [MileageKeeper](http://mileagekeeper.com "Mileage Keeper") and it worked well enough that I didn't ever look for a new one. It has the ability to export and import .csv files, which was quite helpful when Apple had to give me a new phone with a functioning camera.
 
 I have all the service records at a couple different garages in Ottawa and Toronto. This includes oil changes, swapping winter/summer tires and repairs. The few times that I had to pay for parking are also in my saved data.
+
+The only thing that is missing is all the random times that I stopped for car washes.
 
 ```{r data}
 fuel <- read.csv("data/Mazda3.csv")
@@ -30,6 +35,19 @@ parking <- read.csv("data/Parking.csv")
 summary(parking)
 
 ```
+
+Let's look at the total for each cost area.
+
+```{r summarise}
+summarise(group_by(fixed, Type), Cost = sum(Cost))
+
+summarise(group_by(service, Type), Cost = sum(Cost))
+
+summarise(group_by(fuel, year(Date)), Cost = sum(Total.Cost))
+
+summarise(group_by(parking, year(Start.Date)), Cost = sum(Cost))
+```
+
 
 ## Including Plots
 

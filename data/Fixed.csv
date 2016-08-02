@@ -1,4 +1,4 @@
-Date, Description, Amount, Type
+Date, Description, Cost, Type
 2012-11-01, Downpayment, 1500.00, Buy
 2012-11-05, Plates and Registration, 107.15, Registration
 2012-12-01, Loan Payment, 320.52, Buy
@@ -64,4 +64,43 @@ Date, Description, Amount, Type
 2016-06-01, Insurance, 110.66, Insurance
 2016-07-01, Insurance, 110.66, Insurance
 2016-08-01, Insurance, 110.66, Insurance
-2016-07-22, Sale, 4500.00, Sell
+2013-05-01, Parking Space, 100.00, Parking
+2013-06-01, Parking Space, 100.00, Parking
+2013-07-01, Parking Space, 100.00, Parking
+2013-08-01, Parking Space, 100.00, Parking
+2013-09-01, Parking Space, 100.00, Parking
+2013-10-01, Parking Space, 100.00, Parking
+2013-11-01, Parking Space, 100.00, Parking
+2013-12-01, Parking Space, 100.00, Parking
+2014-01-01, Parking Space, 100.00, Parking
+2014-02-01, Parking Space, 100.00, Parking
+2014-03-01, Parking Space, 100.00, Parking
+2014-04-01, Parking Space, 100.00, Parking
+2014-05-01, Parking Space, 100.00, Parking
+2014-06-01, Parking Space, 100.00, Parking
+2014-07-01, Parking Space, 100.00, Parking
+2014-08-01, Parking Space, 100.00, Parking
+2014-09-01, Parking Space, 100.00, Parking
+2014-10-01, Parking Space, 100.00, Parking
+2014-11-01, Parking Space, 100.00, Parking
+2014-12-01, Parking Space, 100.00, Parking
+2015-01-01, Parking Space, 100.00, Parking
+2015-02-01, Parking Space, 100.00, Parking
+2015-03-01, Parking Space, 100.00, Parking
+2015-04-01, Parking Space, 100.00, Parking
+2015-05-01, Parking Space, 100.00, Parking
+2015-06-01, Parking Space, 100.00, Parking
+2015-07-01, Parking Space, 100.00, Parking
+2015-08-01, Parking Space, 100.00, Parking
+2015-09-01, Parking Space, 100.00, Parking
+2015-10-01, Parking Space, 100.00, Parking
+2015-11-01, Parking Space, 100.00, Parking
+2015-12-01, Parking Space, 100.00, Parking
+2016-01-01, Parking Space, 100.00, Parking
+2016-02-01, Parking Space, 100.00, Parking
+2016-03-01, Parking Space, 100.00, Parking
+2016-04-01, Parking Space, 100.00, Parking
+2016-05-01, Parking Space, 100.00, Parking
+2016-06-01, Parking Space, 100.00, Parking
+2016-07-01, Parking Space, 67.00, Parking
+2016-07-22, Sale, -4500.00, Sell

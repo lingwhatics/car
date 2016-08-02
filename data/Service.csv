@@ -1,21 +1,21 @@
-Date, Service, Cost, Provider, Odometer
-2012-12-22, Wipers, 29.11, Walmart, 80128
-2013-02-25, Headlight, 16.70, Canadian Tire, N/A
-2013-04-17, Headlight, 16.70, Canadian Tire, 86855
-2013-02-20, Oil Change, 56.49, Costco, 84382
-2013-06-26, Oil Change, 56.49, Costco, N/A
-2013-12-02, Tire Change, 54.24, Cam's, 91600
-2014-05-24, Oil Change, 40.00, Cam's, 93720
-2014-05-24, Tire Change, 54.24, Cam's, 93720
-2014-08-23, Drive Clean, 33.90, Cam's, 95546
-2014-11-22, Tire Change, 65.54, Cam's, 96389
-2015-05-05, Oil Change, 40, Cam's, 98188
-2015-05-05, Tire Change, 65.54, Cam's, 98188
-2015-11-13, Oil Change, 40, Cam's, 100148
-2015-11-13, Tire Change, 65.54, Cam's, 100148
-2013-07-22, Replace Air Conditioner, 1163.73, Cam's, 90350
-2013-07-22, O2 Sensor, 316.34, Cam's, 90350
-2012-12-10, Replace Clutch, 1146.54, Ottawa Transmission, 79681
-2012-12-13, Winter Tires, 1145.00, OttawaTiresDirect, 79812
-2013-04-15, Tire Change, 39.55, OttawaTiresDirect, 86814
-2015-07-20, Various Repairs, 2179.03, Cam's, 102391
+Date, Type, Item, Cost, Provider, Odometer
+2012-12-22, Parts, Wipers, 29.11, Walmart, 80128
+2013-02-25, Parts, Headlight, 16.70, Canadian Tire, NA
+2013-04-17, Parts, Headlight, 16.70, Canadian Tire, 86855
+2013-02-20, Service, Oil Change, 56.49, Costco, 84382
+2013-06-26, Service, Oil Change, 56.49, Costco, NA
+2013-12-02, Service, Tire Change, 54.24, Cam's, 91600
+2014-05-24, Service, Oil Change, 40.00, Cam's, 93720
+2014-05-24, Service, Tire Change, 54.24, Cam's, 93720
+2014-08-23, Service, Drive Clean, 33.90, Cam's, 95546
+2014-11-22, Service, Tire Change, 65.54, Cam's, 96389
+2015-05-05, Service, Oil Change, 40, Cam's, 98188
+2015-05-05, Service, Tire Change, 65.54, Cam's, 98188
+2015-11-13, Service, Oil Change, 40, Cam's, 100148
+2015-11-13, Service, Tire Change, 65.54, Cam's, 100148
+2013-07-22, Service, Replace Air Conditioner, 1163.73, Cam's, 90350
+2013-07-22, Service, O2 Sensor, 316.34, Cam's, 90350
+2012-12-10, Service, Replace Clutch, 1146.54, Ottawa Transmission, 79681
+2012-12-13, Parts, Winter Tires, 1145.00, OttawaTiresDirect, 79812
+2013-04-15, Service, Tire Change, 39.55, OttawaTiresDirect, 86814
+2015-07-20, Service, Various Repairs, 2179.03, Cam's, 102391
