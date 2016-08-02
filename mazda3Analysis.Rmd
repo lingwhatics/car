@@ -1,0 +1,35 @@
+---
+title: "Mazda3 Analysis"
+author: "Daley Mikalson"
+date: "August 1, 2016"
+output:  
+      html_document:  
+        keep_md: true 
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## The data
+
+For some reason, I kept all the records related to my car for all the years that I owned it. Now that I have sold the car, I am going to clear all the paper out, but not before seeing what it tells me about what the car cost me.
+
+I used a fuel tracker for iOS called [MileageKeeper](http://mileagekeeper.com "Mileage Keeper") and it worked well enough that I didn't ever look for a new one. It has the ability to export and import .csv files, which was quite helpful when Apple had to give me a new phone with a functioning camera.
+
+I have all the service records at a couple different garages in Ottawa and Toronto. This includes oil changes, swapping winter/summer tires and repairs.
+
+```{r fuel}
+fuel <- read.csv("data/Mazda3.csv")
+summary(fuel)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
