@@ -2,13 +2,14 @@
 title: "Mazda3 Analysis"
 author: "Daley Mikalson"
 date: "August 2, 2016"
-output:  
-      html_document:  
-        keep_md: true 
+output:
+  html_document:
+    keep_md: yes
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE,
+                      dpi=300)
 library(dplyr)
 library(magrittr)
 library(ggplot2)
@@ -26,7 +27,11 @@ The only thing that is missing is all the random times that I stopped for car wa
 
 ```{r data}
 fuel <- read.csv("data/Mazda3.csv")
+
+fuel$Distance <- c(-diff(fuel$Odometer),NA)
+fuel$L.100km <- fuel$Fuel.Amount / fuel$Distance * 100
 summary(fuel)
+
 service <- read.csv("data/Service.csv")
 summary(service)
 fixed <- read.csv("data/Fixed.csv")
@@ -39,22 +44,35 @@ summary(parking)
 Let's look at the total for each cost area.
 
 ```{r summarise}
-summarise(group_by(fixed, Type), Cost = sum(Cost))
+totals <- summarise(group_by(fixed, Type), Cost = sum(Cost))
+totals <- rbind(totals, summarise(group_by(service, Type), Cost = sum(Cost)))
+totals <- rbind(totals, data.frame(Type = "Fuel", Cost = sum(fuel$Total.Cost)))
+totals <- rbind(totals, data.frame(Type = "Parking", Cost = sum(parking$Cost)))
+totals
+sum(totals$Cost)
+```
 
-summarise(group_by(service, Type), Cost = sum(Cost))
+```{r bars, echo = FALSE}
+p <- ggplot(totals, aes(x = reorder(Type, -Cost), y = Cost))
+p + geom_bar(stat = "identity", position = "identity") +
+  xlab("Type of Cost") + theme(axis.text.x = element_text(angle=90))
+```
+
+
+```{r annual}
 
 summarise(group_by(fuel, year(Date)), Cost = sum(Total.Cost))
 
 summarise(group_by(parking, year(Start.Date)), Cost = sum(Cost))
 ```
 
-
 ## Including Plots
 
 You can also embed plots, for example:
 
 ```{r pressure, echo=FALSE}
-plot(pressure)
+q <- ggplot(fuel, aes(x=Odometer, y=Fuel.Amount))
+q + geom_bar(stat="identity")
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
