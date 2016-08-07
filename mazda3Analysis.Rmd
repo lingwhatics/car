@@ -1,7 +1,7 @@
 ---
 title: "Mazda3 Analysis"
 author: "Daley Mikalson"
-date: "August 2, 2016"
+date: "August 6, 2016"
 output:
   html_document:
     keep_md: yes
@@ -9,12 +9,15 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE,
-                      dpi=250)
+                      out.width = '700px',
+                      dpi = 300)
 library(dplyr)
 library(magrittr)
 library(ggplot2)
 library(lubridate)
 ```
+
+Have you ever thought about how much you are spending on your car?
 
 ## The data
 For some reason, I kept all the records related to my car for all the years that I owned it. Now that I have sold the car, I am going to clear all the paper out, but not before seeing what it tells me about what the car cost me.
@@ -40,25 +43,36 @@ parking <- read.csv("data/Parking.csv")
 summary(parking)
 
 ```
-
+### Breakdown of types of costs
 Let's look at the total for each cost area.
 
-```{r summarise}
+```{r summarise, echo = FALSE}
 totals <- summarise(group_by(fixed, Type), Cost = sum(Cost))
 totals <- rbind(totals, summarise(group_by(service, Type), Cost = sum(Cost)))
 totals <- rbind(totals, data.frame(Type = "Fuel", Cost = sum(fuel$Total.Cost)))
 totals <- rbind(totals, data.frame(Type = "Parking", Cost = sum(parking$Cost)))
 totals
-sum(totals$Cost)
 ```
+
 
 ```{r bars, echo = FALSE}
 p <- ggplot(totals, aes(x = reorder(Type, -Cost), y = Cost))
 p + geom_bar(stat = "identity", position = "identity") +
-  xlab("Type of Cost") + theme(axis.text.x = element_text(angle=90))
+  xlab("Type of Cost") + theme(axis.text.x = element_text(angle=90)) +
+  scale_y_continuous(breaks = seq((as.integer(min(totals$Cost)/1000) - 1) * 1000, (as.integer(max(totals$Cost)) + 1) * 1000, 1000)) + ggtitle("Total Cost by Type")
 ```
 
-Rather than looking at things by type of cost, we could look at it by year. It is useful to also break it out by Fixed vs. Variable. The really big bar in 2014 is mostly explained by me paying off the balance of the car so that I would stop paying 4.99% interest each year.
+```{r inline, echo = FALSE}
+total_costs <- sum(totals$Cost)
+fixed$Date <- ymd(fixed$Date)
+duration <- interval(min(fixed$Date), max(fixed$Date))
+cost_per_year <- total_costs / time_length(duration, unit = "year")
+```
+
+Over the `r round(time_length(duration, unit = "year"), 2)` years I owned the car I spent $`r format(round(total_costs,2), nsmall = 2)`, which translates into an average of $`r round(cost_per_year, 2)`/year. The annual average does not really tell you the breakdown of when I spent all that money because it was not equal over the whole time.
+
+### Annual cost breakdown
+How did it look when looked at by year. It is useful to also break it out by Fixed vs. Variable. The really big bar in 2014 is mostly explained by me paying off the balance of the car so that I would stop paying 4.99% interest each year.
 ```{r annual, echo = FALSE}
 a <- summarise(group_by(fixed, year(Date)), Cost = sum(Cost), Kind = "fixed")
 b <- summarise(group_by(service, year(Date)), Cost = sum(Cost), Kind = "variable")
@@ -71,13 +85,44 @@ names(t)[1] = "Year"
 p <- ggplot()
 p + geom_bar(data = subset(t, Cost >= 0), aes(x = Year, y= Cost, fill = Kind), stat= "identity") + 
   geom_bar(data = subset(t, Cost < 0), aes(x = Year, y= Cost, fill = Kind), stat= "identity", position = "identity") +
-  scale_y_continuous(breaks = seq(-3000, 11000, 1000))
+  scale_y_continuous(breaks = seq(-3000, 11000, 1000)) + ggtitle("Total Cost by Year")
 ```
 
+### Take out 'sunk' costs
+Of course, most people do not think of their costs like that, so let's take a different view. The purchase price of the car is a sunk cost that does not exist in the mind of most people. The only purchase costs that are included below are the interest on the loan. Negative fixed costs in 2016 are repairs to get the safety certificate minus the sale price.
 
-You can also embed plots, for example:
+```{r annual less fixed, echo = FALSE}
+price_with_tax <- 10000 * 1.13
+purchase <- round(totals$Cost[totals$Type == "Purchase"], 2)
+loan_cost <- round(purchase - price_with_tax, 2)
+payment <- 106.84
+loan_payments <- sum(fixed$Cost[fixed$Description =="Loan Payment"])
+interest <- loan_cost / (loan_payments / payment)
+interest_cost <- filter(fixed, Description == "Loan Payment")
+interest_cost$Cost <- interest_cost$Cost / payment * interest
 
-```{r pressure, echo=FALSE}
-q <- ggplot(fuel, aes(x=Odometer, y=Fuel.Amount))
-q + geom_bar(stat="identity")
+fixed_less_sunk <- rbind(filter(fixed, Type != "Purchase") ,interest_cost)
+  
+a <- summarise(group_by(fixed_less_sunk, year(Date)), Cost = sum(Cost), Kind = "fixed")
+b <- summarise(group_by(service, year(Date)), Cost = sum(Cost), Kind = "variable")
+c <- summarise(group_by(fuel, year(Date)), Cost = sum(Total.Cost), Kind = "variable")
+d <- summarise(group_by(parking, year(Date)), Cost = sum(Cost), Kind = "variable")
+
+e <- bind_rows(list(a,b,c,d))
+names(e)[1] = "Year"
+
+p <- ggplot()
+p + geom_bar(data = subset(e, Cost >= 0), aes(x = Year, y= Cost, fill = Kind), stat= "identity") + 
+  geom_bar(data = subset(e, Cost < 0), aes(x = Year, y= Cost, fill = Kind), stat= "identity", position = "identity") +
+  scale_y_continuous(breaks = seq(-3000, 11000, 1000)) + ggtitle("Total Cost by Year (without 'sunk' costs)")
 ```
+
+### Bits of random info
+- Distance travelled: `r format(102391 - 77003, nsmall = 0)` km
+- Duration of ownership: `r round(time_length(duration, unit = "year"),2)` years
+- Purchase Price: $10000 + tax
+- Sale Price: $4500
+- Total spent: $`r format(round(total_costs,2), nsmall = 2)`
+- Price per km: $`r format(round(total_costs/(102391 - 77003),2), nsmall = 2)`/km
+- Last rental price per km: $`r round(212.05/1279, 2)`/km
+
