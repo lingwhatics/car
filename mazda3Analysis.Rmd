@@ -1,7 +1,7 @@
 ---
 title: "Mazda3 Analysis"
 author: "Daley Mikalson"
-date: "August 6, 2016"
+date: "August 7, 2016"
 output:
   html_document:
     keep_md: yes
@@ -24,15 +24,15 @@ For some reason, I kept all the records related to my car for all the years that
 
 I used a fuel tracker for iOS called [MileageKeeper](http://mileagekeeper.com "Mileage Keeper") and it worked well enough that I didn't ever look for a new one. It has the ability to export and import .csv files, which was quite helpful when Apple had to give me a new phone with a functioning camera.
 
-I have all the service records at a couple different garages in Ottawa and Toronto. This includes oil changes, swapping winter/summer tires and repairs. The few times that I had to pay for parking are also in my saved data.
-
-The only thing that is missing is all the random times that I stopped for car washes.
+I have all the service records at a couple different garages in Ottawa and Toronto. This includes oil changes, swapping winter/summer tires and repairs. The few times that I had to pay for parking are also in my saved data. The only thing that is missing is all the random times that I stopped for car washes.
 
 ```{r data}
 fuel <- read.csv("data/Mazda3.csv")
 
 fuel$Distance <- c(-diff(fuel$Odometer),NA)
 fuel$L.100km <- fuel$Fuel.Amount / fuel$Distance * 100
+fuel$Date <- ymd(fuel$Date)
+fuel$Span <- time_length(c(-int_diff(fuel$Date), NA), unit = "day")
 summary(fuel)
 
 service <- read.csv("data/Service.csv")
@@ -73,6 +73,7 @@ Over the `r round(time_length(duration, unit = "year"), 2)` years I owned the ca
 
 ### Annual cost breakdown
 How did it look when looked at by year. It is useful to also break it out by Fixed vs. Variable. The really big bar in 2014 is mostly explained by me paying off the balance of the car so that I would stop paying 4.99% interest each year.
+
 ```{r annual, echo = FALSE}
 a <- summarise(group_by(fixed, year(Date)), Cost = sum(Cost), Kind = "fixed")
 b <- summarise(group_by(service, year(Date)), Cost = sum(Cost), Kind = "variable")
@@ -89,7 +90,7 @@ p + geom_bar(data = subset(t, Cost >= 0), aes(x = Year, y= Cost, fill = Kind), s
 ```
 
 ### Take out 'sunk' costs
-Of course, most people do not think of their costs like that, so let's take a different view. The purchase price of the car is a sunk cost that does not exist in the mind of most people. The only purchase costs that are included below are the interest on the loan. Negative fixed costs in 2016 are repairs to get the safety certificate minus the sale price.
+Of course, most people do not think of their costs like that, so let's take a different view. The purchase price of the car is a sunk cost that does not exist in the mind of most people. The only purchase cost included below is the interest on the loan. Negative fixed costs in 2016 are repairs to get the safety certificate minus the sale price.
 
 ```{r annual less fixed, echo = FALSE}
 price_with_tax <- 10000 * 1.13
@@ -118,11 +119,36 @@ p + geom_bar(data = subset(e, Cost >= 0), aes(x = Year, y= Cost, fill = Kind), s
 ```
 
 ### Bits of random info
-- Distance travelled: `r format(102391 - 77003, nsmall = 0)` km
-- Duration of ownership: `r round(time_length(duration, unit = "year"),2)` years
 - Purchase Price: $10000 + tax
 - Sale Price: $4500
-- Total spent: $`r format(round(total_costs,2), nsmall = 2)`
-- Price per km: $`r format(round(total_costs/(102391 - 77003),2), nsmall = 2)`/km
-- Last rental price per km: $`r round(212.05/1279, 2)`/km
+- Duration of ownership: `r round(time_length(duration, unit = "year"),2)` years
+- Total spent on car: $`r format(round(total_costs,2), nsmall = 2)`
+- Distance travelled in car: `r format(102391 - 77003, nsmall = 0)` km
+- Price per km driven: $`r format(round(total_costs/(102391 - 77003),2), nsmall = 2)`/km
 
+## What about fuel?
+The car was ok on fuel and had a mean fuel economy of `r round(mean(fuel$L.100km, na.rm = TRUE),2)` L/100km with a range from `r round(min(fuel$L.100km, na.rm = TRUE),2)` to `r round(max(fuel$L.100km, na.rm = TRUE), 2)`. The plot below really shows the variation of highway driving and city driving. Highway driving is clearly shown where the time between fills is 0 - 2 days in the first plot.
+
+``` {r fuel plots, echo = FALSE}
+fuel_sub <- filter(fuel, !is.na(Span))
+p <- ggplot(fuel_sub, aes(x = Span, y = L.100km))
+p + geom_point() + 
+  labs(title = "Fuel Economy vs. Days between fills", x = "Time between fills (days)", y = "Fuel Economy (L/100km)")
+
+q <- ggplot(fuel_sub, aes(x = Distance, y = L.100km))
+q + geom_point() + 
+  labs(title = "Fuel Economy vs. Distance between fills", x = "Distance driven (km)", y = "Fuel Economy (L/100km)")
+```
+
+### When and how much?
+I recorded my odometer reading and the date each time I filled up with fuel so it is easy to see how my use of the car changed after I moved from Ottawa in mid-2013 and did not need to drive to work every day. Road trips to Washington, D.C. and Chicago are also shown with their steep jumps.
+
+``` {r odometer-time, echo = FALSE}
+fuel_sub <- fuel_sub[order(fuel_sub$Odometer),]
+annotations <- data_frame(Date = c("2013-01-01", "2014-03-12", "2015-11-28"), y = c(85000, 87250, 96250), text = c("Driving to work", "Trip to Washington", "Trip to Chicago"), angle = c(65, 90, 90))
+annotations$Date <- ymd(annotations$Date)
+p <- ggplot(fuel_sub, aes(x = Date, y = Odometer))
+p + geom_line() + geom_text(data = annotations, aes(x = Date, y = y, label = text, angle = angle)) +
+  labs(title = "Car use over time", y = "Odometer (km)") +
+  scale_x_date(date_minor_breaks = "2 months")
+```
